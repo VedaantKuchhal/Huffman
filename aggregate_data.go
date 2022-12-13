@@ -10,6 +10,7 @@ type node struct {
 	left int
 	right int
 }
+
 func main() {
 	data := []int{1, 3, 4, 5, 2, 3, 1, 2, 2, 1,}
 	freq_map := make(map[int]int)
