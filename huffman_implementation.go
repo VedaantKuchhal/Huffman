@@ -1,17 +1,17 @@
 package main
 import "fmt"
 
-type MinHeapNode struct {
+type Node struct {
 	symbol byte
 	freq int
 
-	left  *MinHeapNode
-	right *MinHeapNode
+	left  *Node
+	right *Node
 }
 
 type MinHeap struct {
 	// Array to store heap elements
-	heap []*MinHeapNode
+	heap []*Node
 	// Variable to store the size of the heap
 	size int
 }
@@ -35,12 +35,12 @@ func (h *MinHeap) Swap(first int, second int) {
 func NewMinHeap() *MinHeap {
 	// Initialize an empty heap
 	return &MinHeap{
-		heap: []*MinHeapNode{},
+		heap: []*Node{},
 		size: 0,
 	}
 }
 
-func (h *MinHeap) Insert(val *MinHeapNode) {
+func (h *MinHeap) Insert(val *Node) {
 	// Add node to end of heap and update size
 	h.heap = append(h.heap, val)
 	h.size++
@@ -60,7 +60,7 @@ func (h *MinHeap) Insert(val *MinHeapNode) {
 }
 
 // Pop the top node
-func (h *MinHeap) Pop() *MinHeapNode {
+func (h *MinHeap) Pop() *Node {
 	// Return nil the heap is empty
 	if h.size == 0 {
 		return nil
@@ -102,12 +102,12 @@ func (h *MinHeap) Pop() *MinHeapNode {
 }
 
 // Return top of heap (minimum) without deleting
-func (h *MinHeap) Top() *MinHeapNode {
+func (h *MinHeap) Top() *Node {
 	return h.heap[0]
 }
 
 // Print Huffman codes
-func printCodes(root *MinHeapNode, str string) {
+func printCodes(root *Node, str string) {
 	if root == nil {
 		return
 	}
@@ -123,7 +123,7 @@ func buildHuffman(agg_data map[byte]int) *MinHeap {
 	// Create a new min-heap, insert all the data with corresponding frequencies
 	h := NewMinHeap()
 	for symbol, freq := range agg_data {
-		h.Insert(&MinHeapNode{symbol, freq, nil, nil})
+		h.Insert(&Node{symbol, freq, nil, nil})
 	}
 
 	// Until there is one node in min-heap, build the binary tree for encoding
@@ -132,7 +132,7 @@ func buildHuffman(agg_data map[byte]int) *MinHeap {
 		left := h.Pop()
 		right := h.Pop()
 		// New parent node is sum of frequencies of children
-		tmp := &MinHeapNode{'$', left.freq + right.freq, left, right}
+		tmp := &Node{'$', left.freq + right.freq, left, right}
 		// Insert parent node into min-heap
 		h.Insert(tmp)
 	}
@@ -140,7 +140,7 @@ func buildHuffman(agg_data map[byte]int) *MinHeap {
 }
 
 func main(){
-	data := "Helloaskdfhaslkjdhfaaaaaaaaaaaalskjhkjddd!!! !"
+	data := "aaaaaaaaaakkkkkkkkdjdjdjdjdjdjdjdjaaaaaadjdjf"
 	agg_data := Aggregate(data)
 	h := buildHuffman(agg_data)
 	// Print the codes, starting from top of min-heap (only has one node left anyway)
