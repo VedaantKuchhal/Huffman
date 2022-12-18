@@ -118,30 +118,31 @@ func printCodes(root *MinHeapNode, str string) {
 	printCodes(root.right, str+"1")
 }
 
-// Build huffman tree
-func buildHuffman(agg_data map[byte]int) {
+// Build Huffman Tree
+func buildHuffman(agg_data map[byte]int) *MinHeap {
 	// Create a new min-heap, insert all the data with corresponding frequencies
-	minHeap := NewMinHeap()
+	h := NewMinHeap()
 	for symbol, freq := range agg_data {
-		minHeap.Insert(&MinHeapNode{symbol, freq, nil, nil})
+		h.Insert(&MinHeapNode{symbol, freq, nil, nil})
 	}
 
 	// Until there is one node in min-heap, build the binary tree for encoding
-	for minHeap.size != 1 {
+	for h.size != 1 {
 		// Left and right children in subtree are minimum frequencies
-		left := minHeap.Pop()
-		right := minHeap.Pop()
+		left := h.Pop()
+		right := h.Pop()
 		// New parent node is sum of frequencies of children
 		tmp := &MinHeapNode{'$', left.freq + right.freq, left, right}
 		// Insert parent node into min-heap
-		minHeap.Insert(tmp)
+		h.Insert(tmp)
 	}
-	// Print the codes, starting from top of min-heap (only has one node left anyway)
-	printCodes(minHeap.Top(), "")
+	return h
 }
 
 func main(){
 	data := "Helloaskdfhaslkjdhfaaaaaaaaaaaalskjhkjddd!!! !"
 	agg_data := Aggregate(data)
-	buildHuffman(agg_data)
+	h := buildHuffman(agg_data)
+	// Print the codes, starting from top of min-heap (only has one node left anyway)
+	printCodes(h.Top(), "")
 }
