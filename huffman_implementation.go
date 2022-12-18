@@ -2,7 +2,7 @@ package main
 import "fmt"
 
 type MinHeapNode struct {
-	data int
+	symbol byte
 	freq int
 
 	left  *MinHeapNode
@@ -14,6 +14,15 @@ type MinHeap struct {
 	heap []*MinHeapNode
 	// Variable to store the size of the heap
 	size int
+}
+
+// Calculate frequencies of different variables
+func Aggregate(data string) map[byte]int {
+	freq_map := make(map[byte]int)
+	for i:=0; i<len(data); i++ {
+		freq_map[byte(data[i])] += 1
+	}
+	return freq_map
 }
 
 // Swap nodes at specified indices in a given heap
@@ -44,7 +53,6 @@ func (h *MinHeap) Insert(val *MinHeapNode) {
 		// If parent has higher frequency than child (breaking min-heap property), swap
 		if h.heap[parent].freq > h.heap[i].freq {
 			h.Swap(parent, i)
-			// h.heap[parent], h.heap[i] = h.heap[i], h.heap[parent]
 		}
 		// Move up heap
 		i = parent
@@ -84,7 +92,6 @@ func (h *MinHeap) Pop() *MinHeapNode {
 		 // Swap if min-heap property was not maintained
 		if min != i {
 			h.Swap(i, min)
-			// h.heap[i], h.heap[min] = h.heap[min], h.heap[i]
 		} else {
 			break
 		}
@@ -104,22 +111,21 @@ func printCodes(root *MinHeapNode, str string) {
 	if root == nil {
 		return
 	}
-	if root.data != '$' {
-		fmt.Println(root.data, ": ", str)
+	if root.symbol != '$' {
+		fmt.Println(string(root.symbol), ": ", str)
 	}
 	printCodes(root.left, str+"0")
 	printCodes(root.right, str+"1")
 }
 
 // Build huffman tree
-func buildHuffman(data []int, freq []int, size int) {
-	// var left, right *MinHeapNode
-	
+func buildHuffman(agg_data map[byte]int) {
 	// Create a new min-heap, insert all the data with corresponding frequencies
 	minHeap := NewMinHeap()
-	for i := 0; i < size; i++ {
-		minHeap.Insert(&MinHeapNode{data[i], freq[i], nil, nil})
+	for symbol, freq := range agg_data {
+		minHeap.Insert(&MinHeapNode{symbol, freq, nil, nil})
 	}
+
 	// Until there is one node in min-heap, build the binary tree for encoding
 	for minHeap.size != 1 {
 		// Left and right children in subtree are minimum frequencies
@@ -127,7 +133,6 @@ func buildHuffman(data []int, freq []int, size int) {
 		right := minHeap.Pop()
 		// New parent node is sum of frequencies of children
 		tmp := &MinHeapNode{'$', left.freq + right.freq, left, right}
-
 		// Insert parent node into min-heap
 		minHeap.Insert(tmp)
 	}
@@ -136,8 +141,7 @@ func buildHuffman(data []int, freq []int, size int) {
 }
 
 func main(){
-	arr := []int{1, 2, 3, 4, 5}
-	freq := []int{10, 5, 2, 14, 15}
-	size := len(arr)
-	buildHuffman(arr, freq, size)
+	data := "Helloaskdfhaslkjdhfaaaaaaaaaaaalskjhkjddd!!! !"
+	agg_data := Aggregate(data)
+	buildHuffman(agg_data)
 }
